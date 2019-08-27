@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-import yaml
+import csv
 
 import dropbox
+import yaml
 
 
 def retrieve_environ(name):
@@ -19,6 +20,13 @@ def yaml_load(dropbox, filename):
         raise Exception(error_msg)
     data = dropbox_load_file(dropbox, filename)
     return yaml.safe_load(data)
+
+
+def csv_load(filename, delimiter=';'):
+    with open(filename, mode='r') as fp:
+        csv_reader = csv.reader(fp, delimiter=delimiter)
+        data = [row for row in csv_reader]
+    return data
 
 
 def get_dropbox_object(token):
