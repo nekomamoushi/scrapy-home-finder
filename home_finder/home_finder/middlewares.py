@@ -25,7 +25,7 @@ class RotateUserAgentMiddleware(object):
             raise NotConfigured("USER_AGENT_LIST not set or empty")
 
         middleware_klass = cls(user_agents)
-        crawler.signals.connect(o.spider_opened, signal=signals.spider_opened)
+        crawler.signals.connect(middleware_klass.spider_opened, signal=signals.spider_opened)
 
         return middleware_klass
 

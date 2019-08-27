@@ -7,5 +7,12 @@
 
 
 class HomeFinderPipeline(object):
+    def __init__(self, crawler):
+        self._dropbox_token = crawler.settings.get("DROPBOX_TOKEN")
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
     def process_item(self, item, spider):
         return item
