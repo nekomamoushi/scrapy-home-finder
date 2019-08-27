@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import yaml
 
 import dropbox
 
@@ -10,6 +11,14 @@ def retrieve_environ(name):
     if not environ:
         raise Exception("You need to set {name}".format(name=name))
     return environ
+
+
+def yaml_load(dropbox, filename):
+    if not dropbox_file_exists(dropbox, filename):
+        error_msg = "Dropbox: <{0}> don't exists.".format(filename)
+        raise Exception(error_msg)
+    data = dropbox_load_file(dropbox, filename)
+    return yaml.safe_load(data)
 
 
 def get_dropbox_object(token):

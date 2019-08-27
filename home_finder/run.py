@@ -15,6 +15,7 @@ def setup_settings():
     settings.setmodule(settings_module_path, priority='project')
     dropbox_token = retrieve_environ("DROPBOX_TOKEN")
     settings.set("DROPBOX_TOKEN", dropbox_token)
+    settings.set("DROPBOX_SETTINGS_FILENAME", "/home-finder/settings.yml")
     return settings
 
 home_finder_settings = settings=setup_settings()
