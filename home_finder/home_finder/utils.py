@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 import dropbox
+
+
+def retrieve_environ(name):
+    environ = os.environ.get(name, None)
+    if not environ:
+        raise Exception("You need to set {name}".format(name=name))
+    return environ
 
 
 def get_dropbox_object(token):
@@ -30,3 +39,4 @@ def dropbox_load_file(dbx, path):
     md, res = dbx.files_download(path)
     data_as_str = res.content.decode()
     return data_as_str
+
