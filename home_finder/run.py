@@ -16,11 +16,10 @@ def setup_settings():
     dropbox_token = retrieve_environ("DROPBOX_TOKEN")
     settings.set("DROPBOX_TOKEN", dropbox_token)
     settings.set("DROPBOX_SETTINGS_FILENAME", "/home-finder/settings.yml")
+    settings.set("INSEE_CODE_FILENAME", os.getcwd() + "/resources/insee_city_codes.csv")
     return settings
 
 home_finder_settings = settings=setup_settings()
-
 crawler = CrawlerProcess(settings=home_finder_settings)
-
 crawler.crawl(SelogerSpider)
 crawler.start()
