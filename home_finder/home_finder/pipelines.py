@@ -21,5 +21,8 @@ class HomeFinderPipeline(object):
         self._settings_file = crawler.settings.get("DROPBOX_SETTINGS_FILENAME")
         self._settings = yaml_load(self._dbx, self._settings_file)
 
+    def open_spider(self, spider):
+        spider.pipeline = self
+
     def process_item(self, item, spider):
         return item
