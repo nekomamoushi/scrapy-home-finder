@@ -3,6 +3,7 @@
 from math import ceil
 
 from scrapy import Spider
+from scrapy.exceptions import CloseSpider
 from scrapy_selenium import SeleniumRequest
 
 from lxml import html
@@ -19,10 +20,13 @@ class SelogerSpider(Spider):
     allowed_domains = ['seloger.com']
 
     def parse(self, response):
-        root = html.fromstring(response.body)
 
-        nb_annonces = root.cssselect('div.title_nbresult')[0].text_content().strip().split(" ")[0]
-        nb_pages = ceil(int(nb_annonces) / 20)
+        try:
+            root = html.fromstring(response.body)
+            nb_annonces = root.cssselect('div.title_nbresult')[0].text_content().strip().split(" ")[0]
+            nb_pages = ceil(int(nb_annonces) / 20)
+        except IndexError:
+            raise CloseSpider("Captcha Issue")
 
         for annonce in self.parse_page(response):
             yield annonce
