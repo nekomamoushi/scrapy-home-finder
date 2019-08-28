@@ -3,7 +3,6 @@
 from math import ceil
 
 from scrapy import Spider
-from scrapy_splash import SplashRequest
 from scrapy_selenium import SeleniumRequest
 
 from lxml import html
