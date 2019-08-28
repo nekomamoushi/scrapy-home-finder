@@ -13,8 +13,8 @@ from shutil import which
 
 BOT_NAME = 'home_finder'
 
-SPIDER_MODULES = ['home_finder.spiders']
-NEWSPIDER_MODULE = 'home_finder.spiders'
+SPIDER_MODULES = ['crawler.spiders']
+NEWSPIDER_MODULE = 'crawler.spiders'
 
 # Scrapy Selenium
 SELENIUM_DRIVER_NAME = 'firefox'
@@ -64,7 +64,7 @@ COOKIES_ENABLED = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 SPIDER_MIDDLEWARES = {
-    'home_finder.middlewares.RotateUserAgentMiddleware': 543,
+    'crawler.middlewares.RotateUserAgentMiddleware': 543,
 }
 
 # Enable or disable downloader middlewares
@@ -85,7 +85,7 @@ LOG_LEVEL = 'INFO'
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'home_finder.pipelines.HomeFinderPipeline': 300,
+    'crawler.pipelines.HomeFinderPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
