@@ -57,7 +57,7 @@ class HomeFinderPipeline(object):
     def close_spider(self, spider):
         spider.logger.info("Items processes = {}".format(self._item_processed))
         spider.logger.info("You have {number} new annonces.".format(number=len(self._news)))
-        if self._news:
+        if os.path.exists(self._filename) and self._news:
             for item in self._news:
                 self._notifier.notify(item)
         self._fp.close()
