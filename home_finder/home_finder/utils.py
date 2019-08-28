@@ -75,7 +75,7 @@ class Notifier(object):
         return payload
 
     def send(self, data):
-        url = self.notification_url.format(self._trigger, self._credentials)
+        url = self.NOTIFY_URL.format(self._trigger, self._credentials)
         r = requests.post(url, data=data)
         self.logger.debug("http status: <{0}>".format(r.status_code))
 
