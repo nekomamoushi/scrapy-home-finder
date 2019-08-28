@@ -13,7 +13,7 @@ from .utils import get_dropbox_object, yaml_load, csv_load, Notifier
 
 class HomeFinderPipeline(object):
     def __init__(self, crawler):
-        self._load_settings(crawler)
+        self._load_settings(crawler.settings)
         self._filename = "{name}.csv".format(name=crawler.spider.name)
         if os.path.exists(self._filename):
             annonces = csv_load(self._filename, delimiter='|')
@@ -24,14 +24,14 @@ class HomeFinderPipeline(object):
     def from_crawler(cls, crawler):
         return cls(crawler)
 
-    def _load_settings(self, crawler):
-        self._dropbox_token = crawler.settings.get("DROPBOX_TOKEN")
-        self._dbx = get_dropbox_object(self._dropbox_token)
-        self._settings_file = crawler.settings.get("DROPBOX_SETTINGS_FILENAME")
-        self._settings = yaml_load(self._dbx, self._settings_file)
+    def _load_settings(self, settings):
+        dropbox_token = settings.get("HOME_FINDER_DROPBOX_TOKEN")
+        dropbox_object = get_dropbox_object(dropbox_token)
+        settings_file = settings.get("HOME_FINDER_DROPBOX_SETTINGS_FILENAME")
+        self._settings = yaml_load(dropbox_object, settings_file)
         self._notifier = Notifier(
-            crawler.settings.get("NOTIFIER_TOKEN"),
-            crawler.settings.get("NOTIFIER_TRIGGER")
+            settings.get("HOME_FINDER_NOTIFIER_TOKEN"),
+            settings.get("HOME_FINDER_NOTIFIER_TRIGGER")
         )
 
     def open_spider(self, spider):

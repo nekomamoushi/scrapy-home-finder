@@ -147,7 +147,7 @@ class SelogerSpider(Spider):
             return "{" + "ci:" + code + "}"
 
         places = []
-        insee_code_city_filename = self.settings["INSEE_CODE_FILENAME"]
+        insee_code_city_filename = self.settings["HOME_FINDER_INSEE_CODE_FILENAME"]
         insee_codes = csv_load(insee_code_city_filename)
         cities = self.pipeline._settings['search']['cities']
         for city in cities:

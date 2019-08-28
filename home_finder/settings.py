@@ -9,8 +9,20 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import os
 from shutil import which
 
+#
+# Home Finder Settings
+#
+HOME_FINDER_ROOT_DIR = os.path.dirname(__file__) + "/.."
+HOME_FINDER_INSEE_CODE_FILENAME = HOME_FINDER_ROOT_DIR + "/resources/insee_city_codes.csv"
+HOME_FINDER_DROPBOX_SETTINGS_FILENAME = "/home-finder/settings.yml"
+HOME_FINDER_NOTIFIER_TRIGGER = "seloger"
+
+#
+# Scrapy Settings
+#
 BOT_NAME = 'home_finder'
 
 SPIDER_MODULES = ['home_finder.spiders']
