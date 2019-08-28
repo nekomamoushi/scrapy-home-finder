@@ -77,7 +77,6 @@ class Notifier(object):
     def send(self, data):
         url = self.NOTIFY_URL.format(self._trigger, self._credentials)
         r = requests.post(url, data=data)
-        self.logger.debug("http status: <{0}>".format(r.status_code))
 
     def notify(self, data):
         data = self.process_data(data)
