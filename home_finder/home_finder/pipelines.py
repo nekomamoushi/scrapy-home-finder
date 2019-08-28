@@ -38,12 +38,21 @@ class HomeFinderPipeline(object):
         self._writer.writerow(self._fields)
         del item
         self._item_processed = 0
+        self._news = []
+
+    def check_annonce(self, item):
+        annonce_id = item['annonce_id']
+        ids = [annonce[0] for annonce in self._annonces]
+        if annonce_id in ids:
+            self._news.append(item)
 
     def process_item(self, item, spider):
         self._writer.writerow([item[name] for name in self._fields])
         self._item_processed = self._item_processed + 1
+        self.check_annonce(item)
         return item
 
     def close_spider(self, spider):
         print("Items processes = {}".format(self._item_processed))
+        print("You have {number} new annonces.".format(len(self._news)))
         self._fp.close()
