@@ -8,8 +8,10 @@ verify_ssl = true
 [packages]
 scrapy = "*"
 dropbox = "*"
-scrapy-splash = "*"
 pyyaml = "*"
+lxml = "*"
+cssselect = "*"
+scrapy-selenium = "*"
 
 [requires]
 python_version = "3.7"
