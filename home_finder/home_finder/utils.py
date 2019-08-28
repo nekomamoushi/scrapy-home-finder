@@ -5,7 +5,7 @@ import csv
 
 import dropbox
 import yaml
-
+import requests
 
 def retrieve_environ(name):
     environ = os.environ.get(name, None)
@@ -57,3 +57,28 @@ def dropbox_load_file(dbx, path):
     data_as_str = res.content.decode()
     return data_as_str
 
+
+class Notifier(object):
+
+    NOTIFY_URL = "https://maker.ifttt.com/trigger/{0}/with/key/{1}"
+
+    def __init__(self, credentials, trigger):
+        self._credentials = credentials
+        self._trigger = trigger
+
+    def process_data(self, data):
+        payload = dict(
+            value1=data["city"],
+            value2=data["price"],
+            value3=data["url"]
+        )
+        return payload
+
+    def send(self, data):
+        url = self.notification_url.format(self._trigger, self._credentials)
+        r = requests.post(url, data=data)
+        self.logger.debug("http status: <{0}>".format(r.status_code))
+
+    def notify(self, data):
+        data = self.process_data(data)
+        self.send(data)

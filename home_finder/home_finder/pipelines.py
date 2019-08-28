@@ -9,14 +9,15 @@ import os
 import csv
 
 from .items import HomeFinderItem
-from .utils import get_dropbox_object, yaml_load, csv_load
+from .utils import get_dropbox_object, yaml_load, csv_load, Notifier
 
 class HomeFinderPipeline(object):
     def __init__(self, crawler):
         self._load_settings(crawler)
         self._filename = "{name}.csv".format(name=crawler.spider.name)
         if os.path.exists(self._filename):
-            self._annonces = csv_load(self._filename)
+            annonces = csv_load(self._filename, delimiter='|')
+            self._annonce_ids = [annonce[0] for annonce in annonces]
             os.remove(self._filename)
 
     @classmethod
@@ -28,6 +29,10 @@ class HomeFinderPipeline(object):
         self._dbx = get_dropbox_object(self._dropbox_token)
         self._settings_file = crawler.settings.get("DROPBOX_SETTINGS_FILENAME")
         self._settings = yaml_load(self._dbx, self._settings_file)
+        self._notifier = Notifier(
+            crawler.settings.get("NOTIFIER_TOKEN"),
+            crawler.settings.get("NOTIFIER_TRIGGER")
+        )
 
     def open_spider(self, spider):
         spider.pipeline = self
@@ -35,15 +40,12 @@ class HomeFinderPipeline(object):
         self._writer = csv.writer(self._fp, delimiter='|')
         item = HomeFinderItem()
         self._fields = [name for name in item.fields]
-        self._writer.writerow(self._fields)
-        del item
         self._item_processed = 0
         self._news = []
 
     def check_annonce(self, item):
         annonce_id = item['annonce_id']
-        ids = [annonce[0] for annonce in self._annonces]
-        if annonce_id in ids:
+        if annonce_id in self._annonce_ids:
             self._news.append(item)
 
     def process_item(self, item, spider):
@@ -53,6 +55,9 @@ class HomeFinderPipeline(object):
         return item
 
     def close_spider(self, spider):
-        print("Items processes = {}".format(self._item_processed))
-        print("You have {number} new annonces.".format(len(self._news)))
+        spider.logger.info("Items processes = {}".format(self._item_processed))
+        spider.logger.info("You have {number} new annonces.".format(number=len(self._news)))
+        if self._news:
+            for item in self._news:
+                self._notifier.notify(item)
         self._fp.close()
