@@ -7,6 +7,7 @@
 
 import os
 import csv
+import pathlib
 
 from .items import HomeFinderItem
 from .utils import get_dropbox_object, yaml_load, csv_load, Notifier
@@ -14,11 +15,7 @@ from .utils import get_dropbox_object, yaml_load, csv_load, Notifier
 class HomeFinderPipeline(object):
     def __init__(self, crawler):
         self._load_settings(crawler.settings)
-        self._filename = "{name}.csv".format(name=crawler.spider.name)
-        if os.path.exists(self._filename):
-            annonces = csv_load(self._filename, delimiter='|')
-            self._annonce_ids = [annonce[0] for annonce in annonces]
-            os.remove(self._filename)
+        self._load_database(crawler)
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -34,9 +31,18 @@ class HomeFinderPipeline(object):
             settings.get("HOME_FINDER_NOTIFIER_TRIGGER")
         )
 
+    def _load_database(self, crawler):
+        filename = "{name}.csv".format(name=crawler.spider.name)
+        self._database = pathlib.Path().home() / filename
+        self._annonce_ids = []
+        if self._database.is_file():
+            annonces = csv_load(str(self._database), delimiter='|')
+            self._annonce_ids = [annonce[0] for annonce in annonces]
+            self._database.unlink()
+
     def open_spider(self, spider):
         spider.pipeline = self
-        self._fp = open(self._filename, 'w', encoding='utf8')
+        self._fp = open(str(self._database), mode='w', encoding='utf8')
         self._writer = csv.writer(self._fp, delimiter='|')
         item = HomeFinderItem()
         self._fields = [name for name in item.fields]
@@ -45,7 +51,7 @@ class HomeFinderPipeline(object):
 
     def check_annonce(self, item):
         annonce_id = item['annonce_id']
-        if annonce_id in self._annonce_ids:
+        if self._annonce_ids and annonce_id not in self._annonce_ids:
             self._news.append(item)
 
     def process_item(self, item, spider):
@@ -56,8 +62,8 @@ class HomeFinderPipeline(object):
 
     def close_spider(self, spider):
         spider.logger.info("Items processes = {}".format(self._item_processed))
-        spider.logger.info("You have {number} new annonces.".format(number=len(self._news)))
-        if os.path.exists(self._filename) and self._news:
+        if self._annonce_ids and self._news:
+            spider.logger.info("You have {number} new annonces.".format(number=len(self._news)))
             for item in self._news:
                 self._notifier.notify(item)
         self._fp.close()
