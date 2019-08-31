@@ -43,11 +43,19 @@ class SelogerSpider(Spider):
 
     def parse_annonce(self, element):
         item = HomeFinderItem()
+
         item['url'] = element[1][0].get('href')
-        item['size'] = element[1][1][2].text_content()
-        item['price'] = element[1][2][1].text_content().strip()
+
+        temp_size = element[1][1][2].text_content()
+        item['size'] = temp_size.split(" ")[0]
+
+        temp_price = element[1][2][1].text_content().strip()
+        item['price'] = "{}".format(temp_price.split(" ")[0])
+
         item['city'] = element[1][4].text_content().strip()
+
         item['annonce_id'] = element[1][5].get('data-idannonce')
+
         return item
 
     # overriding start_requests means that the urls defined in start_urls are ignored.
