@@ -1,12 +1,25 @@
 
 import os
 
+from pathlib import Path
+from dotenv import load_dotenv
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from scrapy.utils.project import get_project_settings
 
 from home_finder.spiders.seloger import SelogerSpider
 from home_finder.utils import retrieve_environ
+
+
+
+def load_environ():
+    load_if_dotenv()
+    return from_environ()
+
+
+def load_if_dotenv():
+    env_path = Path(".") / ".env"
+    load_dotenv(dotenv_path=env_path, verbose=False)
 
 
 def from_environ():
@@ -25,7 +38,7 @@ def setup_settings(dropbox, notifier):
 
 
 def main():
-    dropbox, notifier = from_environ()
+    dropbox, notifier = load_environ()
     home_finder_settings = setup_settings(dropbox, notifier)
     crawler = CrawlerProcess(settings=home_finder_settings)
     crawler.crawl(SelogerSpider)

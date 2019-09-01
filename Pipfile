@@ -13,6 +13,7 @@ lxml = "*"
 cssselect = "*"
 scrapy-selenium = "*"
 requests = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
